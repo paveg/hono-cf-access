@@ -1,5 +1,8 @@
 # hono-cf-access
 
+[![CI](https://github.com/paveg/hono-cf-access/actions/workflows/ci.yml/badge.svg)](https://github.com/paveg/hono-cf-access/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Access control middleware for [Hono](https://hono.dev/) leveraging Cloudflare Workers' `request.cf` properties.
 
 Add country blocking, ASN blocking, and maintenance mode to any route with a single line.
