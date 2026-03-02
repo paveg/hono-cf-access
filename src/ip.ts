@@ -1,5 +1,18 @@
 import type { Context } from "hono";
 
+const IPV4_PART_COUNT = 4;
+
+function isValidIPv4(ip: string): boolean {
+	const parts = ip.split(".");
+	if (parts.length !== IPV4_PART_COUNT) return false;
+	for (const part of parts) {
+		if (part === "") return false;
+		const n = Number(part);
+		if (!Number.isInteger(n) || n < 0 || n > 255) return false;
+	}
+	return true;
+}
+
 export function ipToInt(ip: string): number {
 	const parts = ip.split(".");
 	return (
@@ -12,6 +25,8 @@ export function ipToInt(ip: string): number {
 }
 
 export function isIpInCidr(ip: string, cidr: string): boolean {
+	if (!isValidIPv4(ip)) return false;
+
 	const slash = cidr.indexOf("/");
 	if (slash === -1) return ip === cidr;
 

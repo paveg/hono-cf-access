@@ -2,14 +2,10 @@ import type { MiddlewareHandler } from "hono";
 import { ensureCfInfo } from "./cf";
 import { cfUnavailableResponse, countryDeniedResponse } from "./errors";
 import type { CountryBlockOptions } from "./types";
+import { validateDenyAllowOptions } from "./validation";
 
 export function countryBlock(options: CountryBlockOptions): MiddlewareHandler {
-	if (options.deny && options.allow) {
-		throw new Error('Cannot specify both "deny" and "allow". Use one or the other.');
-	}
-	if (!options.deny && !options.allow) {
-		throw new Error('Either "deny" or "allow" must be specified.');
-	}
+	validateDenyAllowOptions(options.deny, options.allow);
 
 	const fallback = options.fallback ?? "allow";
 	const denySet = options.deny ? new Set(options.deny.map((c) => c.toUpperCase())) : null;

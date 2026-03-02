@@ -85,6 +85,15 @@ describe("asnBlock", () => {
 		expect(() => asnBlock({})).toThrow('Either "deny" or "allow" must be specified');
 	});
 
+	// Empty array validation
+	it("throws when deny is an empty array", () => {
+		expect(() => asnBlock({ deny: [] })).toThrow();
+	});
+
+	it("throws when allow is an empty array", () => {
+		expect(() => asnBlock({ allow: [] })).toThrow();
+	});
+
 	// AB9: onDenied custom response
 	it("uses onDenied custom response", async () => {
 		const app = new Hono();
