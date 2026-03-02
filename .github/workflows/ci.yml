@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -33,3 +33,11 @@ jobs:
 
       - name: Build
         run: npx tsup
+
+  ci-pass:
+    if: always()
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
+        if: needs.ci.result != 'success'
