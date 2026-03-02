@@ -216,6 +216,37 @@ describe("maintenance", () => {
 		expect(res.status).toBe(503);
 	});
 
+	// MT: retryAfter: 0 should still set the header
+	it("includes Retry-After: 0 header when retryAfter is 0", async () => {
+		const app = new Hono();
+		app.use("*", maintenance({ enabled: true, retryAfter: 0 }));
+		app.get("/test", ok);
+
+		const res = await app.request(new Request("http://localhost/test"));
+		expect(res.status).toBe(503);
+		expect(res.headers.get("retry-after")).toBe("0");
+	});
+
+	// MT: allowedIps: [] should not bypass maintenance (empty list = no one allowed)
+	it("returns 503 when allowedIps is empty array", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: [],
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(
+			new Request("http://localhost/test", {
+				headers: { "cf-connecting-ip": "203.0.113.50" },
+			}),
+		);
+		expect(res.status).toBe(503);
+	});
+
 	// No allowedIps with enabled true → always maintenance
 	it("returns 503 for all requests when no allowedIps", async () => {
 		const app = new Hono();

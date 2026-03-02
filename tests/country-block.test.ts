@@ -85,6 +85,15 @@ describe("countryBlock", () => {
 		expect(() => countryBlock({})).toThrow('Either "deny" or "allow" must be specified');
 	});
 
+	// Empty array validation
+	it("throws when deny is an empty array", () => {
+		expect(() => countryBlock({ deny: [] })).toThrow();
+	});
+
+	it("throws when allow is an empty array", () => {
+		expect(() => countryBlock({ allow: [] })).toThrow();
+	});
+
 	// CB9: onDenied custom response
 	it("uses onDenied custom response", async () => {
 		const app = new Hono();

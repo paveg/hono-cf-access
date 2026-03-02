@@ -2,14 +2,10 @@ import type { MiddlewareHandler } from "hono";
 import { ensureCfInfo } from "./cf";
 import { asnDeniedResponse, cfUnavailableResponse } from "./errors";
 import type { AsnBlockOptions } from "./types";
+import { validateDenyAllowOptions } from "./validation";
 
 export function asnBlock(options: AsnBlockOptions): MiddlewareHandler {
-	if (options.deny && options.allow) {
-		throw new Error('Cannot specify both "deny" and "allow". Use one or the other.');
-	}
-	if (!options.deny && !options.allow) {
-		throw new Error('Either "deny" or "allow" must be specified.');
-	}
+	validateDenyAllowOptions(options.deny, options.allow);
 
 	const fallback = options.fallback ?? "allow";
 	const denySet = options.deny ? new Set(options.deny) : null;
