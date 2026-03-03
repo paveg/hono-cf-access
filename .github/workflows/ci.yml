@@ -15,24 +15,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: npx biome check .
+      - run: pnpm lint
 
-      - name: Type check
-        run: npx tsc --noEmit
+      - run: pnpm typecheck
 
-      - name: Test
-        run: npx vitest run
+      - run: pnpm test
 
-      - name: Build
-        run: npx tsup
+      - run: pnpm build
 
   ci-pass:
     if: always()
