@@ -1,6 +1,6 @@
 {
 	"name": "hono-cf-access",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "Access control middleware for Hono leveraging Cloudflare Workers request.cf properties",
 	"type": "module",
 	"main": "./dist/index.cjs",
@@ -18,7 +18,9 @@
 			}
 		}
 	},
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"scripts": {
 		"build": "tsup",
 		"test": "vitest run",
