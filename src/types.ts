@@ -13,19 +13,16 @@ export interface CfInfo {
 	postalCode?: string;
 }
 
-export interface CountryBlockOptions {
-	deny?: string[];
-	allow?: string[];
-	fallback?: "allow" | "deny";
-	onDenied?: (c: Context) => Response | Promise<Response>;
-}
+type DenyAllow<T> = { deny: T[]; allow?: never } | { allow: T[]; deny?: never };
 
-export interface AsnBlockOptions {
-	deny?: number[];
-	allow?: number[];
+type BlockBase = {
 	fallback?: "allow" | "deny";
 	onDenied?: (c: Context) => Response | Promise<Response>;
-}
+};
+
+export type CountryBlockOptions = BlockBase & DenyAllow<string>;
+
+export type AsnBlockOptions = BlockBase & DenyAllow<number>;
 
 export interface MaintenanceOptions {
 	enabled: boolean | ((c: Context) => boolean | Promise<boolean>);

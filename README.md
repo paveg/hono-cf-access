@@ -161,7 +161,7 @@ maintenance({
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `enabled` | `boolean \| (c: Context) => boolean \| Promise<boolean>` | — | Whether maintenance mode is active |
-| `allowedIps` | `string[]` | — | IPs/CIDRs that bypass maintenance |
+| `allowedIps` | `string[]` | — | IPs/CIDRs that bypass maintenance (IPv4 and IPv6) |
 | `retryAfter` | `number \| string` | — | `Retry-After` header value |
 | `fallback` | `'allow' \| 'deny'` | `'allow'` | Behavior when IP cannot be resolved |
 | `onMaintenance` | `(c: Context) => Response` | — | Custom maintenance response |
@@ -201,7 +201,8 @@ Example response:
   "type": "https://hono-cf-access.dev/errors/country-denied",
   "title": "Forbidden",
   "status": 403,
-  "detail": "Access from country 'CN' is not allowed"
+  "detail": "Access from country 'CN' is not allowed",
+  "instance": "/api/data"
 }
 ```
 
