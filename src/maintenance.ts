@@ -11,29 +11,23 @@ export function maintenance(options: MaintenanceOptions): MiddlewareHandler {
 		const isEnabled =
 			typeof options.enabled === "function" ? await options.enabled(c) : options.enabled;
 
-		if (!isEnabled) {
-			ensureCfInfo(c);
-			return next();
-		}
+		if (isEnabled) {
+			const respond = () =>
+				options.onMaintenance?.(c) ?? maintenanceResponse(options.retryAfter, c.req.path);
 
-		// Maintenance is enabled — check IP allowlist
-		if (options.allowedIps?.length) {
-			const clientIp = getClientIp(c);
-
-			if (!clientIp) {
-				// IP unavailable — use fallback
-				if (fallback === "allow") {
-					ensureCfInfo(c);
-					return next();
+			if (options.allowedIps?.length) {
+				const clientIp = getClientIp(c);
+				if (!clientIp) {
+					if (fallback === "deny") return respond();
+				} else if (!isIpAllowed(clientIp, options.allowedIps)) {
+					return respond();
 				}
-				// fallback: 'deny' → return maintenance response
-			} else if (isIpAllowed(clientIp, options.allowedIps)) {
-				ensureCfInfo(c);
-				return next();
+			} else {
+				return respond();
 			}
 		}
 
-		if (options.onMaintenance) return options.onMaintenance(c);
-		return maintenanceResponse(options.retryAfter);
+		ensureCfInfo(c);
+		return next();
 	};
 }

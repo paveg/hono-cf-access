@@ -18,6 +18,16 @@ describe("countryBlock", () => {
 		expect(res.headers.get("content-type")).toBe("application/problem+json");
 	});
 
+	it("includes instance field in denied response", async () => {
+		const app = new Hono();
+		app.use("*", countryBlock({ deny: ["CN"] }));
+		app.get("/api/data", ok);
+
+		const res = await app.request(createCfRequest("/api/data", { country: "CN" }));
+		const body = await res.json();
+		expect(body.instance).toBe("/api/data");
+	});
+
 	// CB2: Access from a country NOT in deny list
 	it("allows access from a country not in deny list", async () => {
 		const app = new Hono();
@@ -73,15 +83,17 @@ describe("countryBlock", () => {
 		expect(body.type).toBe("https://hono-cf-access.dev/errors/cf-unavailable");
 	});
 
-	// CB7: Both deny and allow specified
+	// CB7: Both deny and allow specified (runtime guard for JS consumers)
 	it("throws when both deny and allow are specified", () => {
+		// @ts-expect-error testing invalid input
 		expect(() => countryBlock({ deny: ["CN"], allow: ["JP"] })).toThrow(
 			'Cannot specify both "deny" and "allow"',
 		);
 	});
 
-	// CB8: Neither deny nor allow specified
+	// CB8: Neither deny nor allow specified (runtime guard for JS consumers)
 	it("throws when neither deny nor allow is specified", () => {
+		// @ts-expect-error testing invalid input
 		expect(() => countryBlock({})).toThrow('Either "deny" or "allow" must be specified');
 	});
 

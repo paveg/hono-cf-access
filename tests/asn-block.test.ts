@@ -18,6 +18,16 @@ describe("asnBlock", () => {
 		expect(res.headers.get("content-type")).toBe("application/problem+json");
 	});
 
+	it("includes instance field in denied response", async () => {
+		const app = new Hono();
+		app.use("*", asnBlock({ deny: [4134] }));
+		app.get("/api/data", ok);
+
+		const res = await app.request(createCfRequest("/api/data", { asn: 4134 }));
+		const body = await res.json();
+		expect(body.instance).toBe("/api/data");
+	});
+
 	// AB2: Access from an ASN NOT in deny list
 	it("allows access from an ASN not in deny list", async () => {
 		const app = new Hono();
@@ -73,15 +83,17 @@ describe("asnBlock", () => {
 		expect(body.type).toBe("https://hono-cf-access.dev/errors/cf-unavailable");
 	});
 
-	// AB7: Both deny and allow specified
+	// AB7: Both deny and allow specified (runtime guard for JS consumers)
 	it("throws when both deny and allow are specified", () => {
+		// @ts-expect-error testing invalid input
 		expect(() => asnBlock({ deny: [4134], allow: [13335] })).toThrow(
 			'Cannot specify both "deny" and "allow"',
 		);
 	});
 
-	// AB8: Neither deny nor allow specified
+	// AB8: Neither deny nor allow specified (runtime guard for JS consumers)
 	it("throws when neither deny nor allow is specified", () => {
+		// @ts-expect-error testing invalid input
 		expect(() => asnBlock({})).toThrow('Either "deny" or "allow" must be specified');
 	});
 

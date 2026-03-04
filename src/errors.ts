@@ -5,6 +5,7 @@ interface ProblemDetail {
 	title: string;
 	status: number;
 	detail: string;
+	instance?: string;
 }
 
 function problemResponse(problem: ProblemDetail, extraHeaders?: Record<string, string>): Response {
@@ -17,41 +18,45 @@ function problemResponse(problem: ProblemDetail, extraHeaders?: Record<string, s
 	});
 }
 
-export function countryDeniedResponse(country: string): Response {
+export function countryDeniedResponse(country: string, instance?: string): Response {
 	return problemResponse({
 		type: `${BASE_TYPE}/country-denied`,
 		title: "Forbidden",
 		status: 403,
 		detail: `Access from country '${country}' is not allowed`,
+		instance,
 	});
 }
 
-export function asnDeniedResponse(asn: number): Response {
+export function asnDeniedResponse(asn: number, instance?: string): Response {
 	return problemResponse({
 		type: `${BASE_TYPE}/asn-denied`,
 		title: "Forbidden",
 		status: 403,
 		detail: `Access from ASN ${asn} is not allowed`,
+		instance,
 	});
 }
 
-export function maintenanceResponse(retryAfter?: number | string): Response {
+export function maintenanceResponse(retryAfter?: number | string, instance?: string): Response {
 	return problemResponse(
 		{
 			type: `${BASE_TYPE}/maintenance`,
 			title: "Service Unavailable",
 			status: 503,
 			detail: "The service is currently under maintenance",
+			instance,
 		},
 		retryAfter !== undefined ? { "retry-after": String(retryAfter) } : undefined,
 	);
 }
 
-export function cfUnavailableResponse(): Response {
+export function cfUnavailableResponse(instance?: string): Response {
 	return problemResponse({
 		type: `${BASE_TYPE}/cf-unavailable`,
 		title: "Forbidden",
 		status: 403,
 		detail: "Cloudflare request metadata is not available",
+		instance,
 	});
 }
