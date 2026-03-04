@@ -1,11 +1,13 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"module": "ESNext",
+		"module": "ES2022",
 		"moduleResolution": "bundler",
+		"lib": ["ES2022", "DOM"],
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
+		"isolatedModules": true,
 		"forceConsistentCasingInFileNames": true,
 		"declaration": true,
 		"declarationMap": true,
@@ -14,6 +16,6 @@
 		"rootDir": "./src",
 		"types": ["@cloudflare/workers-types"]
 	},
-	"include": ["src/**/*.ts"],
+	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests"]
 }

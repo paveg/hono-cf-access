@@ -222,6 +222,23 @@ describe("isIpInCidr — IPv6", () => {
 		expect(isIpInCidr("2001:db8::1", "2001:db8::/")).toBe(false);
 	});
 
+	// Invalid IPv6 edge cases for branch coverage
+	it("returns false for multiple :: in IPv6", () => {
+		expect(isIpInCidr("2001::db8::1", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns false for IPv6 with too many groups around ::", () => {
+		expect(isIpInCidr("2001:db8:1:2:3:4:5::6:7", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns false for IPv6 group with more than 4 hex digits", () => {
+		expect(isIpInCidr("2001:db800:0:0:0:0:0:1", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns false for IPv4 with empty octet part", () => {
+		expect(isIpInCidr("192..1.1", "192.168.1.0/24")).toBe(false);
+	});
+
 	// Cross-family rejection
 	it("rejects IPv4 address against IPv6 CIDR", () => {
 		expect(isIpInCidr("192.168.1.1", "2001:db8::/32")).toBe(false);

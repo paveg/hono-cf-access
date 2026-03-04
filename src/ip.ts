@@ -52,8 +52,7 @@ function expandIPv6(ip: string): string[] | null {
 		const right = halves[1] === "" ? [] : halves[1].split(":");
 		const fill = IPV6_GROUP_COUNT - left.length - right.length;
 		if (fill < 0) return null;
-		const groups = [...left, ...Array(fill).fill("0"), ...right];
-		return groups.length === IPV6_GROUP_COUNT ? groups : null;
+		return [...left, ...Array(fill).fill("0"), ...right];
 	}
 
 	const groups = ip.split(":");
