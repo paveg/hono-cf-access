@@ -161,7 +161,7 @@ maintenance({
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `enabled` | `boolean \| (c: Context) => boolean \| Promise<boolean>` | — | Whether maintenance mode is active |
-| `allowedIps` | `string[]` | — | IPv4 addresses/CIDRs that bypass maintenance (IPv6 not supported) |
+| `allowedIps` | `string[]` | — | IPs/CIDRs that bypass maintenance (IPv4 and IPv6) |
 | `retryAfter` | `number \| string` | — | `Retry-After` header value |
 | `fallback` | `'allow' \| 'deny'` | `'allow'` | Behavior when IP cannot be resolved |
 | `onMaintenance` | `(c: Context) => Response` | — | Custom maintenance response |
