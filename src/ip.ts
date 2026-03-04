@@ -70,6 +70,13 @@ function isValidIPv6(ip: string): boolean {
 	return true;
 }
 
+const DIGITS_ONLY = /^\d+$/;
+
+function parsePrefix(raw: string): number | null {
+	if (!DIGITS_ONLY.test(raw)) return null;
+	return Number(raw);
+}
+
 function ipv6ToBigInt(ip: string): bigint {
 	const groups = expandIPv6(ip) as string[];
 	let result = 0n;
@@ -119,7 +126,8 @@ export function isIpInCidr(ip: string, cidr: string): boolean {
 				isValidIPv6(network) &&
 				ipv6ToBigInt(normIp) === ipv6ToBigInt(network)
 			);
-		const prefix = Number.parseInt(normCidr.substring(slash + 1), 10);
+		const prefix = parsePrefix(normCidr.substring(slash + 1));
+		if (prefix === null) return false;
 		return isIpv6InCidr(normIp, network, prefix);
 	}
 
@@ -128,8 +136,8 @@ export function isIpInCidr(ip: string, cidr: string): boolean {
 	if (slash === -1) return isValidIPv4(network) && normIp === network;
 
 	if (!isValidIPv4(network)) return false;
-	const prefix = Number.parseInt(normCidr.substring(slash + 1), 10);
-	if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) return false;
+	const prefix = parsePrefix(normCidr.substring(slash + 1));
+	if (prefix === null || prefix < 0 || prefix > 32) return false;
 
 	const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
 	return (ipToInt(normIp) & mask) === (ipToInt(network) & mask);

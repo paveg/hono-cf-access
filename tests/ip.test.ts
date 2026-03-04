@@ -126,6 +126,26 @@ describe("isIpInCidr", () => {
 	it("rejects plain CIDR with invalid network", () => {
 		expect(isIpInCidr("10.0.0.1", "999.999.999.999")).toBe(false);
 	});
+
+	it("rejects CIDR with trailing alpha in prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/24abc")).toBe(false);
+	});
+
+	it("rejects CIDR with extra slash in prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/24/extra")).toBe(false);
+	});
+
+	it("rejects CIDR with decimal prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/24.5")).toBe(false);
+	});
+
+	it("rejects CIDR with empty prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/")).toBe(false);
+	});
+
+	it("rejects CIDR with whitespace in prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/24 ")).toBe(false);
+	});
 });
 
 describe("isIpInCidr — IPv6", () => {
@@ -188,6 +208,18 @@ describe("isIpInCidr — IPv6", () => {
 
 	it("returns false for prefix > 128", () => {
 		expect(isIpInCidr("2001:db8::1", "2001:db8::/129")).toBe(false);
+	});
+
+	it("rejects IPv6 CIDR with trailing alpha in prefix", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::/32abc")).toBe(false);
+	});
+
+	it("rejects IPv6 CIDR with extra slash in prefix", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::/32/extra")).toBe(false);
+	});
+
+	it("rejects IPv6 CIDR with empty prefix", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::/")).toBe(false);
 	});
 
 	// Cross-family rejection
