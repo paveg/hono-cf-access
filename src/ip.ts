@@ -85,7 +85,7 @@ function isIpv6InCidr(ip: string, network: string, prefix: number): boolean {
 
 	if (prefix === 0) return true;
 	const shift = BigInt(128 - prefix);
-	return (ipv6ToBigInt(ip) >> shift) === (ipv6ToBigInt(network) >> shift);
+	return ipv6ToBigInt(ip) >> shift === ipv6ToBigInt(network) >> shift;
 }
 
 export function ipToInt(ip: string): number {
@@ -113,7 +113,12 @@ export function isIpInCidr(ip: string, cidr: string): boolean {
 	if (ipIsV6 !== cidrIsV6) return false;
 
 	if (ipIsV6) {
-		if (slash === -1) return isValidIPv6(normIp) && isValidIPv6(network) && ipv6ToBigInt(normIp) === ipv6ToBigInt(network);
+		if (slash === -1)
+			return (
+				isValidIPv6(normIp) &&
+				isValidIPv6(network) &&
+				ipv6ToBigInt(normIp) === ipv6ToBigInt(network)
+			);
 		const prefix = Number.parseInt(normCidr.substring(slash + 1), 10);
 		return isIpv6InCidr(normIp, network, prefix);
 	}
