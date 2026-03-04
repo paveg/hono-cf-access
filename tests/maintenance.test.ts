@@ -261,6 +261,66 @@ describe("maintenance", () => {
 		expect(res.status).toBe(503);
 	});
 
+	// IPv6 client in allowedIps — pass
+	it("allows access when IPv6 client IP is in allowedIps", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: ["2001:db8::/32"],
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(
+			new Request("http://localhost/test", {
+				headers: { "cf-connecting-ip": "2001:db8::1" },
+			}),
+		);
+		expect(res.status).toBe(200);
+	});
+
+	// IPv6 client not in allowedIps — block
+	it("returns 503 when IPv6 client IP is not in allowedIps", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: ["2001:db8::/32"],
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(
+			new Request("http://localhost/test", {
+				headers: { "cf-connecting-ip": "2001:db9::1" },
+			}),
+		);
+		expect(res.status).toBe(503);
+	});
+
+	// IPv4-mapped IPv6 client matches IPv4 allowedIps
+	it("allows IPv4-mapped IPv6 client against IPv4 allowedIps", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: ["203.0.113.0/24"],
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(
+			new Request("http://localhost/test", {
+				headers: { "cf-connecting-ip": "::ffff:203.0.113.50" },
+			}),
+		);
+		expect(res.status).toBe(200);
+	});
+
 	// CF3: cfInfo with chained middlewares (no recomputation)
 	it("does not recompute cfInfo when already set", async () => {
 		const app = new Hono();
