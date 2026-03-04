@@ -109,6 +109,113 @@ describe("isIpInCidr", () => {
 	it("rejects address just below /16 range", () => {
 		expect(isIpInCidr("172.15.255.255", "172.16.0.0/16")).toBe(false);
 	});
+
+	// Network part validation
+	it("rejects CIDR with invalid network part", () => {
+		expect(isIpInCidr("10.0.0.1", "invalid/24")).toBe(false);
+	});
+
+	it("rejects CIDR with out-of-range prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/33")).toBe(false);
+	});
+
+	it("rejects CIDR with negative prefix", () => {
+		expect(isIpInCidr("10.0.0.1", "10.0.0.0/-1")).toBe(false);
+	});
+
+	it("rejects plain CIDR with invalid network", () => {
+		expect(isIpInCidr("10.0.0.1", "999.999.999.999")).toBe(false);
+	});
+});
+
+describe("isIpInCidr — IPv6", () => {
+	// IPv6 exact match
+	it("returns true for exact IPv6 match", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::1")).toBe(true);
+	});
+
+	it("returns false for non-matching IPv6", () => {
+		expect(isIpInCidr("2001:db8::2", "2001:db8::1")).toBe(false);
+	});
+
+	// IPv6 CIDR ranges
+	it("returns true for IPv6 within /64 CIDR", () => {
+		expect(isIpInCidr("2001:db8:abcd:0012::1", "2001:db8:abcd:0012::/64")).toBe(true);
+	});
+
+	it("returns false for IPv6 outside /64 CIDR", () => {
+		expect(isIpInCidr("2001:db8:abcd:0013::1", "2001:db8:abcd:0012::/64")).toBe(false);
+	});
+
+	it("returns true for IPv6 within /32 CIDR", () => {
+		expect(isIpInCidr("2001:db8:ffff::1", "2001:db8::/32")).toBe(true);
+	});
+
+	it("returns false for IPv6 outside /32 CIDR", () => {
+		expect(isIpInCidr("2001:db9::1", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns true for exact match with /128 CIDR", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::1/128")).toBe(true);
+	});
+
+	it("returns false for non-match with /128 CIDR", () => {
+		expect(isIpInCidr("2001:db8::2", "2001:db8::1/128")).toBe(false);
+	});
+
+	it("returns true for any IPv6 with /0 CIDR", () => {
+		expect(isIpInCidr("2001:db8::1", "::/0")).toBe(true);
+		expect(isIpInCidr("fe80::1", "::/0")).toBe(true);
+	});
+
+	// Full form vs abbreviated form
+	it("matches full form against abbreviated CIDR", () => {
+		expect(isIpInCidr("2001:0db8:0000:0000:0000:0000:0000:0001", "2001:db8::1")).toBe(true);
+	});
+
+	it("matches abbreviated form against full CIDR", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:0db8:0000:0000:0000:0000:0000:0001")).toBe(true);
+	});
+
+	// Invalid IPv6
+	it("returns false for invalid IPv6 characters", () => {
+		expect(isIpInCidr("2001:db8::xyz", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns false for too many groups", () => {
+		expect(isIpInCidr("2001:db8:1:2:3:4:5:6:7", "2001:db8::/32")).toBe(false);
+	});
+
+	it("returns false for prefix > 128", () => {
+		expect(isIpInCidr("2001:db8::1", "2001:db8::/129")).toBe(false);
+	});
+
+	// Cross-family rejection
+	it("rejects IPv4 address against IPv6 CIDR", () => {
+		expect(isIpInCidr("192.168.1.1", "2001:db8::/32")).toBe(false);
+	});
+
+	it("rejects IPv6 address against IPv4 CIDR", () => {
+		expect(isIpInCidr("2001:db8::1", "192.168.1.0/24")).toBe(false);
+	});
+
+	// IPv4-mapped IPv6
+	it("matches IPv4-mapped IPv6 against IPv4 CIDR", () => {
+		expect(isIpInCidr("::ffff:192.168.1.1", "192.168.1.0/24")).toBe(true);
+	});
+
+	it("matches IPv4 against IPv4-mapped IPv6 exact", () => {
+		expect(isIpInCidr("192.168.1.1", "::ffff:192.168.1.1")).toBe(true);
+	});
+
+	// Zone ID stripping
+	it("strips zone ID from IPv6 address", () => {
+		expect(isIpInCidr("fe80::1%eth0", "fe80::1")).toBe(true);
+	});
+
+	it("strips zone ID from IPv6 CIDR", () => {
+		expect(isIpInCidr("fe80::1", "fe80::%eth0/64")).toBe(true);
+	});
 });
 
 describe("isIpAllowed", () => {
@@ -122,5 +229,18 @@ describe("isIpAllowed", () => {
 
 	it("returns false for empty list", () => {
 		expect(isIpAllowed("192.168.1.1", [])).toBe(false);
+	});
+
+	// Mixed IPv4 + IPv6 allow list
+	it("matches IPv6 in mixed allow list", () => {
+		expect(isIpAllowed("2001:db8::1", ["10.0.0.0/8", "2001:db8::/32"])).toBe(true);
+	});
+
+	it("matches IPv4 in mixed allow list with IPv6 entries", () => {
+		expect(isIpAllowed("10.0.0.1", ["2001:db8::/32", "10.0.0.0/8"])).toBe(true);
+	});
+
+	it("rejects unmatched IP in mixed allow list", () => {
+		expect(isIpAllowed("172.16.0.1", ["2001:db8::/32", "10.0.0.0/8"])).toBe(false);
 	});
 });
