@@ -18,9 +18,7 @@
 			}
 		}
 	},
-	"files": [
-		"dist"
-	],
+	"files": ["dist"],
 	"scripts": {
 		"build": "tsup",
 		"test": "vitest run",
@@ -30,7 +28,8 @@
 		"format": "biome format --write .",
 		"typecheck": "tsc --noEmit",
 		"release": "pnpm build && changeset publish",
-		"version-packages": "changeset version && pnpm lint:fix"
+		"version-packages": "changeset version && pnpm lint:fix",
+		"prepare": "lefthook install"
 	},
 	"keywords": [
 		"hono",
@@ -54,13 +53,14 @@
 	},
 	"packageManager": "pnpm@10.14.0",
 	"pnpm": {
-		"onlyBuiltDependencies": ["@biomejs/biome", "esbuild"]
+		"onlyBuiltDependencies": ["@biomejs/biome", "esbuild", "lefthook"]
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.0",
 		"@changesets/cli": "2.29.8",
 		"@cloudflare/workers-types": "^4.0.0",
 		"hono": "^4.0.0",
+		"lefthook": "2.1.2",
 		"tsup": "^8.0.0",
 		"typescript": "^5.6.0",
 		"vitest": "^2.1.0"
