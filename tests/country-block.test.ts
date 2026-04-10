@@ -13,7 +13,7 @@ describe("countryBlock", () => {
 		const res = await app.request(createCfRequest("/test", { country: "CN" }));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/country-denied");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#country-denied");
 		expect(body.detail).toContain("CN");
 		expect(res.headers.get("content-type")).toBe("application/problem+json");
 	});
@@ -58,7 +58,7 @@ describe("countryBlock", () => {
 		const res = await app.request(createCfRequest("/test", { country: "CN" }));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/country-denied");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#country-denied");
 	});
 
 	// CB5: request.cf undefined + fallback: 'allow' (default)
@@ -80,7 +80,7 @@ describe("countryBlock", () => {
 		const res = await app.request(new Request("http://localhost/test"));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/cf-unavailable");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#cf-unavailable");
 	});
 
 	// CB7: Both deny and allow specified (runtime guard for JS consumers)

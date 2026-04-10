@@ -13,7 +13,7 @@ describe("maintenance", () => {
 		const res = await app.request(new Request("http://localhost/test"));
 		expect(res.status).toBe(503);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/maintenance");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#maintenance");
 		expect(body.title).toBe("Service Unavailable");
 		expect(res.headers.get("content-type")).toBe("application/problem+json");
 	});
