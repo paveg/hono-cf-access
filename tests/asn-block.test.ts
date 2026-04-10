@@ -13,7 +13,7 @@ describe("asnBlock", () => {
 		const res = await app.request(createCfRequest("/test", { asn: 4134 }));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/asn-denied");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#asn-denied");
 		expect(body.detail).toContain("4134");
 		expect(res.headers.get("content-type")).toBe("application/problem+json");
 	});
@@ -58,7 +58,7 @@ describe("asnBlock", () => {
 		const res = await app.request(createCfRequest("/test", { asn: 4134 }));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/asn-denied");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#asn-denied");
 	});
 
 	// AB5: request.cf undefined + fallback: 'allow' (default)
@@ -80,7 +80,7 @@ describe("asnBlock", () => {
 		const res = await app.request(new Request("http://localhost/test"));
 		expect(res.status).toBe(403);
 		const body = await res.json();
-		expect(body.type).toBe("https://hono-cf-access.dev/errors/cf-unavailable");
+		expect(body.type).toBe("https://github.com/paveg/hono-cf-access#cf-unavailable");
 	});
 
 	// AB7: Both deny and allow specified (runtime guard for JS consumers)
