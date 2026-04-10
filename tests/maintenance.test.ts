@@ -337,4 +337,38 @@ describe("maintenance", () => {
 		const body = await res.json();
 		expect(body.country).toBe("JP");
 	});
+
+	// Secure default: allowedIps + missing cf-connecting-ip → fail closed (503)
+	it("returns 503 by default when CF-Connecting-IP is missing with allowedIps set", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: ["203.0.113.50"],
+				// no explicit fallback — relies on secure default
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(new Request("http://localhost/test"));
+		expect(res.status).toBe(503);
+	});
+
+	// Opt-in permissive fallback still works when explicitly requested
+	it("allows bypass when fallback allow is explicitly opted in with missing IP", async () => {
+		const app = new Hono();
+		app.use(
+			"*",
+			maintenance({
+				enabled: true,
+				allowedIps: ["203.0.113.50"],
+				fallback: "allow",
+			}),
+		);
+		app.get("/test", ok);
+
+		const res = await app.request(new Request("http://localhost/test"));
+		expect(res.status).toBe(200);
+	});
 });

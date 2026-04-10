@@ -163,7 +163,7 @@ maintenance({
 | `enabled` | `boolean \| (c: Context) => boolean \| Promise<boolean>` | — | Whether maintenance mode is active |
 | `allowedIps` | `string[]` | — | IPs/CIDRs that bypass maintenance (IPv4 and IPv6) |
 | `retryAfter` | `number \| string` | — | `Retry-After` header value |
-| `fallback` | `'allow' \| 'deny'` | `'allow'` | Behavior when IP cannot be resolved |
+| `fallback` | `'allow' \| 'deny'` | `'deny'` | Fail-closed behavior when client IP cannot be resolved with `allowedIps` set. Opt into `'allow'` for permissive fallback. |
 | `onMaintenance` | `(c: Context) => Response` | — | Custom maintenance response |
 
 ### `CfInfo`
