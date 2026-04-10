@@ -5,7 +5,7 @@ import { getClientIp, isIpAllowed } from "./ip";
 import type { MaintenanceOptions } from "./types";
 
 export function maintenance(options: MaintenanceOptions): MiddlewareHandler {
-	const fallback = options.fallback ?? "allow";
+	const fallback = options.fallback ?? "deny";
 
 	return async (c, next) => {
 		const isEnabled =
