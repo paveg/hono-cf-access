@@ -1,4 +1,4 @@
-const BASE_TYPE = "https://hono-cf-access.dev/errors";
+const BASE_TYPE = "https://github.com/paveg/hono-cf-access#";
 
 interface ProblemDetail {
 	type: string;
@@ -20,7 +20,7 @@ function problemResponse(problem: ProblemDetail, extraHeaders?: Record<string, s
 
 export function countryDeniedResponse(country: string, instance?: string): Response {
 	return problemResponse({
-		type: `${BASE_TYPE}/country-denied`,
+		type: `${BASE_TYPE}country-denied`,
 		title: "Forbidden",
 		status: 403,
 		detail: `Access from country '${country}' is not allowed`,
@@ -30,7 +30,7 @@ export function countryDeniedResponse(country: string, instance?: string): Respo
 
 export function asnDeniedResponse(asn: number, instance?: string): Response {
 	return problemResponse({
-		type: `${BASE_TYPE}/asn-denied`,
+		type: `${BASE_TYPE}asn-denied`,
 		title: "Forbidden",
 		status: 403,
 		detail: `Access from ASN ${asn} is not allowed`,
@@ -41,7 +41,7 @@ export function asnDeniedResponse(asn: number, instance?: string): Response {
 export function maintenanceResponse(retryAfter?: number | string, instance?: string): Response {
 	return problemResponse(
 		{
-			type: `${BASE_TYPE}/maintenance`,
+			type: `${BASE_TYPE}maintenance`,
 			title: "Service Unavailable",
 			status: 503,
 			detail: "The service is currently under maintenance",
@@ -53,7 +53,7 @@ export function maintenanceResponse(retryAfter?: number | string, instance?: str
 
 export function cfUnavailableResponse(instance?: string): Response {
 	return problemResponse({
-		type: `${BASE_TYPE}/cf-unavailable`,
+		type: `${BASE_TYPE}cf-unavailable`,
 		title: "Forbidden",
 		status: 403,
 		detail: "Cloudflare request metadata is not available",

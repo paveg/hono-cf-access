@@ -189,22 +189,34 @@ Default responses follow [RFC 9457 Problem Details](https://www.rfc-editor.org/r
 
 | Scenario | Status | Type |
 |----------|--------|------|
-| Country denied | 403 | `/errors/country-denied` |
-| ASN denied | 403 | `/errors/asn-denied` |
-| Maintenance | 503 | `/errors/maintenance` |
-| CF data unavailable (strict) | 403 | `/errors/cf-unavailable` |
+| Country denied | 403 | `#country-denied` |
+| ASN denied | 403 | `#asn-denied` |
+| Maintenance | 503 | `#maintenance` |
+| CF data unavailable (strict) | 403 | `#cf-unavailable` |
 
 Example response:
 
 ```json
 {
-  "type": "https://hono-cf-access.dev/errors/country-denied",
+  "type": "https://github.com/paveg/hono-cf-access#country-denied",
   "title": "Forbidden",
   "status": 403,
   "detail": "Access from country 'CN' is not allowed",
   "instance": "/api/data"
 }
 ```
+
+### country-denied
+Request was denied because the resolved country code is on the deny list (or not on the allow list).
+
+### asn-denied
+Request was denied because the resolved ASN is on the deny list (or not on the allow list).
+
+### maintenance
+Request was rejected because maintenance mode is enabled. When `allowedIps` is set, only listed IPs bypass the lockdown.
+
+### cf-unavailable
+Request was denied because `request.cf` geolocation data was unavailable and `fallback` is set to `"deny"`.
 
 ## Difference from `@hono/cloudflare-access`
 
