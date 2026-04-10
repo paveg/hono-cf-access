@@ -34,15 +34,38 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      - name: Create GitHub Release for published packages
-        if: steps.changesets.outputs.published == 'true'
+      - name: Ensure GitHub Release for current version
+        # Idempotent: creates the tag + Release for the current package.json
+        # version if one does not already exist. Does not rely on
+        # changesets/action outputs, which are empty when the action only
+        # publishes (no pending changesets) rather than versioning + publishing
+        # in the same run — see the v0.3.0 incident for motivation.
+        #
+        # Security: all shell inputs come from the repository (package.json,
+        # CHANGELOG.md) or trusted env vars (GITHUB_SHA). No untrusted
+        # github.event.* data is interpolated into the run block.
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGES: ${{ steps.changesets.outputs.publishedPackages }}
         run: |
-          echo "$PACKAGES" | jq -r '.[] | "v\(.version)"' | while read -r tag; do
-            gh release create "$tag" --title "$tag" --generate-notes
-          done
+          VERSION=$(jq -r '.version' package.json)
+          TAG="v$VERSION"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; skipping."
+            exit 0
+          fi
+          # Extract this version's changelog section: lines between "## VERSION"
+          # and the next "## " header.
+          awk -v ver="## $VERSION" '
+            $0 == ver { found=1; next }
+            found && /^## / { exit }
+            found { print }
+          ' CHANGELOG.md > /tmp/release-notes.md
+          if [ -s /tmp/release-notes.md ]; then
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes-file /tmp/release-notes.md
+          else
+            echo "No CHANGELOG section found for $VERSION; falling back to auto-generated notes."
+            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --generate-notes
+          fi
       - name: Set ci-pass status on Version Packages PR
         if: steps.changesets.outputs.pullRequestNumber
         env:
