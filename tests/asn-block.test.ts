@@ -87,14 +87,14 @@ describe("asnBlock", () => {
 	it("throws when both deny and allow are specified", () => {
 		// @ts-expect-error testing invalid input
 		expect(() => asnBlock({ deny: [4134], allow: [13335] })).toThrow(
-			'Cannot specify both "deny" and "allow"',
+			'asnBlock: cannot specify both "deny" and "allow"',
 		);
 	});
 
 	// AB8: Neither deny nor allow specified (runtime guard for JS consumers)
 	it("throws when neither deny nor allow is specified", () => {
 		// @ts-expect-error testing invalid input
-		expect(() => asnBlock({})).toThrow('Either "deny" or "allow" must be specified');
+		expect(() => asnBlock({})).toThrow('asnBlock: either "deny" or "allow" must be specified');
 	});
 
 	// Empty array validation

@@ -4,6 +4,7 @@ import { asnDeniedResponse } from "./errors";
 import type { AsnBlockOptions } from "./types";
 
 const createAsnBlock = createBlockMiddleware<number>({
+	name: "asnBlock",
 	extractValue: (info) => info.asn,
 	defaultResponse: (asn, c) => asnDeniedResponse(asn, c.req.path),
 });
