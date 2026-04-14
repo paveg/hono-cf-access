@@ -146,7 +146,21 @@ export function isIpAllowed(ip: string, allowList: string[]): boolean {
 	return allowList.some((entry) => isIpInCidr(ip, entry));
 }
 
-/** Returns the client IP address from the cf-connecting-ip header. */
+/**
+ * Returns the client IP from the `cf-connecting-ip` request header.
+ *
+ * @param c - Hono context.
+ * @returns The client IP string, or `undefined` if the header is missing.
+ *
+ * @remarks
+ * `cf-connecting-ip` is **only trustworthy inside a Cloudflare Workers
+ * request context**. Outside Workers (local dev over plain HTTP, when
+ * running behind a non-CF reverse proxy, or when tests inject arbitrary
+ * headers) the header is caller-controllable and MUST NOT be used for
+ * security decisions. Callers relying on this IP for allowlisting —
+ * notably `maintenance()` with `allowedIps` — must ensure requests
+ * reach this middleware only via Cloudflare.
+ */
 export function getClientIp(c: Context): string | undefined {
 	return c.req.header("cf-connecting-ip") ?? undefined;
 }

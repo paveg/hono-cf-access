@@ -134,6 +134,28 @@ maintenance({
 })
 ```
 
+## Security
+
+### Trust boundary for `cf-connecting-ip`
+
+The `cf-connecting-ip` header is injected by Cloudflare and is reliable only when the request actually reaches your Worker through Cloudflare's network. Outside that boundary — local development over plain HTTP, a non-Cloudflare reverse proxy, or test harnesses — the header is caller-controllable. The `maintenance({ allowedIps })` option depends on this header to grant bypass access, so do not rely on it for security unless your deployment guarantees that all traffic is CF-terminated.
+
+### IP allowlist syntax
+
+`allowedIps` accepts bare IPv4 and IPv6 addresses as well as CIDR blocks (e.g. `192.168.1.0/24`, `2001:db8::/32`). IPv6 zone IDs (`fe80::1%eth0`) and IPv4-mapped IPv6 addresses (`::ffff:192.0.2.1`) are normalised before matching, so you can use standard notation without worrying about representation differences.
+
+### Malformed CIDR entries
+
+A malformed CIDR entry (e.g. `192.168.1.0/33` or `not:a:cidr/64`) silently never matches any address. It does not throw — the entry is simply skipped, and no IP is granted a match by it. Audit your allowlist carefully: a typo in an admin CIDR will lock out that admin with no error.
+
+### Fail-closed on misconfiguration
+
+For `maintenance`, `fallback` defaults to `"deny"` when the client IP cannot be resolved and `allowedIps` is set, preventing an accidental lockdown bypass. For `countryBlock` and `asnBlock`, `fallback` defaults to `"allow"` (permissive) when Cloudflare's `cf` metadata is absent — for example during local development. Set `fallback: "deny"` on those middlewares too if you need a stricter posture in environments where CF data may be unavailable.
+
+### JWT and service tokens are out of scope
+
+This library performs access control based on Cloudflare-supplied geo and network data. It does not verify Cloudflare Access JWT tokens or service-token headers. Treating the mere presence of a header as proof of identity, without cryptographic signature verification, is unsafe. Use [`@hono/cloudflare-access`](https://github.com/honojs/middleware/tree/main/packages/cloudflare-access) alongside this library if you need Access JWT verification or service-token identity.
+
 ## API
 
 ### `countryBlock(options)`
