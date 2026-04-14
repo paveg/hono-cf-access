@@ -1,18 +1,27 @@
+import { BlockConfigError, type BlockMiddlewareName } from "./errors";
+
 /**
  * Validates deny/allow options shared by countryBlock and asnBlock.
- * Throws on invalid combinations: both specified, neither specified, or empty arrays.
+ *
+ * @throws {BlockConfigError} When both specified, neither specified, or
+ *   either is an empty array. The error's `middleware` field identifies
+ *   the caller.
  */
 export function validateDenyAllowOptions(
 	deny: unknown[] | undefined,
 	allow: unknown[] | undefined,
+	middleware: BlockMiddlewareName,
 ): void {
 	if (deny && allow) {
-		throw new Error('Cannot specify both "deny" and "allow". Use one or the other.');
+		throw new BlockConfigError(
+			'cannot specify both "deny" and "allow" — use one or the other',
+			middleware,
+		);
 	}
 	if (!deny && !allow) {
-		throw new Error('Either "deny" or "allow" must be specified.');
+		throw new BlockConfigError('either "deny" or "allow" must be specified', middleware);
 	}
 	if (deny?.length === 0 || allow?.length === 0) {
-		throw new Error("deny/allow must not be empty.");
+		throw new BlockConfigError("deny/allow must not be empty", middleware);
 	}
 }

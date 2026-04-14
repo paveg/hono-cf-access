@@ -87,14 +87,16 @@ describe("countryBlock", () => {
 	it("throws when both deny and allow are specified", () => {
 		// @ts-expect-error testing invalid input
 		expect(() => countryBlock({ deny: ["CN"], allow: ["JP"] })).toThrow(
-			'Cannot specify both "deny" and "allow"',
+			'countryBlock: cannot specify both "deny" and "allow"',
 		);
 	});
 
 	// CB8: Neither deny nor allow specified (runtime guard for JS consumers)
 	it("throws when neither deny nor allow is specified", () => {
 		// @ts-expect-error testing invalid input
-		expect(() => countryBlock({})).toThrow('Either "deny" or "allow" must be specified');
+		expect(() => countryBlock({})).toThrow(
+			'countryBlock: either "deny" or "allow" must be specified',
+		);
 	});
 
 	// Empty array validation

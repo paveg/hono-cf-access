@@ -60,3 +60,15 @@ export function cfUnavailableResponse(instance?: string): Response {
 		instance,
 	});
 }
+
+export type BlockMiddlewareName = "countryBlock" | "asnBlock" | "maintenance";
+
+export class BlockConfigError extends Error {
+	readonly middleware: BlockMiddlewareName;
+
+	constructor(message: string, middleware: BlockMiddlewareName) {
+		super(`${middleware}: ${message}`);
+		this.name = "BlockConfigError";
+		this.middleware = middleware;
+	}
+}

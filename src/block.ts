@@ -1,10 +1,11 @@
 import type { Context, MiddlewareHandler } from "hono";
 import { ensureCfInfo } from "./cf";
-import { cfUnavailableResponse } from "./errors";
+import { type BlockMiddlewareName, cfUnavailableResponse } from "./errors";
 import type { CfInfo } from "./types";
 import { validateDenyAllowOptions } from "./validation";
 
 interface BlockConfig<T> {
+	name: BlockMiddlewareName;
 	extractValue: (info: CfInfo) => T | undefined;
 	defaultResponse: (value: T, c: Context) => Response;
 	normalize?: (items: T[]) => T[];
@@ -19,7 +20,7 @@ interface BlockOptions<T> {
 
 export function createBlockMiddleware<T>(config: BlockConfig<T>) {
 	return (options: BlockOptions<T>): MiddlewareHandler => {
-		validateDenyAllowOptions(options.deny, options.allow);
+		validateDenyAllowOptions(options.deny, options.allow, config.name);
 
 		const fallback = options.fallback ?? "allow";
 		const norm = config.normalize ?? ((x: T[]) => x);
