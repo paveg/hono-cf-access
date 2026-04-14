@@ -1,6 +1,14 @@
 import type { Context } from "hono";
 import type { CfInfo } from "./types";
 
+/**
+ * Extracts the supported subset of {@link CfInfo} from a request's
+ * `request.cf` properties, or returns `undefined` if `request.cf` is
+ * missing (e.g. local dev without CF runtime).
+ *
+ * @param c - Hono context.
+ * @returns {@link CfInfo} or `undefined`.
+ */
 export function extractCfInfo(c: Context): CfInfo | undefined {
 	const cf = c.req.raw.cf;
 	if (!cf) return undefined;
