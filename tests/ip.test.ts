@@ -267,6 +267,48 @@ describe("isIpInCidr — IPv6", () => {
 	});
 });
 
+describe("ip edge cases", () => {
+	it("strips IPv6 zone ID before matching", () => {
+		expect(isIpInCidr("fe80::1%eth0", "fe80::/10")).toBe(true);
+	});
+
+	it("matches IPv4-mapped IPv6 against IPv4 CIDR", () => {
+		expect(isIpInCidr("::ffff:192.0.2.1", "192.0.2.0/24")).toBe(true);
+	});
+
+	it("IPv4-mapped IPv6 does not match an IPv6 CIDR after normalization", () => {
+		expect(isIpInCidr("::ffff:192.0.2.1", "::ffff:0:0/96")).toBe(false);
+	});
+
+	it("rejects malformed CIDR prefix > 32 for IPv4 without throwing", () => {
+		expect(isIpInCidr("192.168.1.1", "192.168.1.0/33")).toBe(false);
+	});
+
+	it("rejects CIDR with negative prefix", () => {
+		expect(isIpInCidr("192.168.1.1", "192.168.1.0/-1")).toBe(false);
+	});
+
+	it("rejects CIDR with non-numeric prefix", () => {
+		expect(isIpInCidr("192.168.1.1", "192.168.1.0/abc")).toBe(false);
+	});
+
+	it("rejects malformed IPv6 CIDR network", () => {
+		expect(isIpInCidr("::1", "not:a:valid::cidr/64")).toBe(false);
+	});
+
+	it("rejects IPv6 CIDR with prefix > 128", () => {
+		expect(isIpInCidr("::1", "::/129")).toBe(false);
+	});
+
+	it("IPv4 /0 matches any address", () => {
+		expect(isIpInCidr("1.2.3.4", "0.0.0.0/0")).toBe(true);
+	});
+
+	it("IPv6 /0 matches any address", () => {
+		expect(isIpInCidr("2001:db8::1", "::/0")).toBe(true);
+	});
+});
+
 describe("isIpAllowed", () => {
 	it("returns true when IP matches any entry", () => {
 		expect(isIpAllowed("192.168.1.50", ["10.0.0.0/8", "192.168.1.0/24"])).toBe(true);
