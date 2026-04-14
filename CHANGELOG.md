@@ -1,5 +1,22 @@
 # hono-cf-access
 
+## 0.4.0
+
+### Minor Changes
+
+- [#19](https://github.com/paveg/hono-cf-access/pull/19) [`b084eca`](https://github.com/paveg/hono-cf-access/commit/b084eca686c9867b42edb313003e323c13e09f18) Thanks [@paveg](https://github.com/paveg)! - feat: add `BlockConfigError` class, exported from the package root.
+  Validation errors from `countryBlock` / `asnBlock` now throw
+  `BlockConfigError` (still `instanceof Error`). Error messages now include
+  the offending middleware name as a prefix.
+
+### Patch Changes
+
+- [#16](https://github.com/paveg/hono-cf-access/pull/16) [`21ba4cc`](https://github.com/paveg/hono-cf-access/commit/21ba4cc1d9e7a0c07bd2dc431993c9bd0d1e4b23) Thanks [@paveg](https://github.com/paveg)! - docs: add TSDoc to public API, `CfInfo` remarks, and README Security section.
+  No API changes.
+
+- [#22](https://github.com/paveg/hono-cf-access/pull/22) [`97dddeb`](https://github.com/paveg/hono-cf-access/commit/97dddeb997972a76b25a2d9e48ec578bd853a770) Thanks [@paveg](https://github.com/paveg)! - test: include `src/index.ts` in coverage and add IPv6 / malformed-CIDR
+  edge-case tests and middleware-chaining assertions.
+
 ## 0.3.0
 
 ### Minor Changes
