@@ -1,5 +1,15 @@
 import type { Context } from "hono";
 
+/**
+ * Subset of `IncomingRequestCfProperties` this library surfaces on the
+ * Hono context.
+ *
+ * @remarks
+ * Intentionally omitted fields include `tlsVersion`, `clientTcpRtt`,
+ * `metalocation`, `requestPriority`, and other transport-level details.
+ * Scope is restricted to geographic and network-identity data relevant to
+ * access control; widen the type explicitly if you need more.
+ */
 export interface CfInfo {
 	country?: string;
 	asn?: number;
