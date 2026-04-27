@@ -1,6 +1,6 @@
 {
 	"name": "hono-cf-access",
-	"version": "0.4.1",
+	"version": "0.4.2",
 	"description": "Access control middleware for Hono leveraging Cloudflare Workers request.cf properties",
 	"type": "module",
 	"main": "./dist/index.cjs",
