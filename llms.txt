@@ -1,0 +1,37 @@
+# hono-cf-access
+
+> Access control middleware for [Hono](https://hono.dev/) leveraging Cloudflare Workers' `request.cf` properties. Provides country blocking, ASN blocking, and maintenance mode as composable middlewares with RFC 9457 Problem Details error responses and zero external dependencies (Hono peer dependency only).
+
+The library exposes three middlewares — `countryBlock()`, `asnBlock()`, `maintenance()` — that can be chained on any Hono route. Each accepts declarative `deny` / `allow` lists (mutually exclusive) and a `fallback` option that controls behavior when `request.cf` is unavailable (e.g. local development). All middlewares populate a `cfInfo` context variable with normalized geo data accessible from downstream handlers.
+
+Important scope boundary: this library performs **authorization based on Cloudflare-supplied geo/network data**. It does **not** verify Cloudflare Access JWTs or service tokens — pair with [`@hono/cloudflare-access`](https://github.com/honojs/middleware/tree/main/packages/cloudflare-access) if you need cryptographic identity verification.
+
+## Documentation
+
+- [README](https://github.com/paveg/hono-cf-access/blob/main/README.md): Full usage guide, API reference, security notes, and RFC 9457 error response catalog
+- [Contributing guide](https://github.com/paveg/hono-cf-access/blob/main/CONTRIBUTING.md): Development setup, build / test / lint commands, and PR conventions
+- [Changelog](https://github.com/paveg/hono-cf-access/blob/main/CHANGELOG.md): Release history maintained via Changesets
+
+## Source
+
+- [src/index.ts](https://github.com/paveg/hono-cf-access/blob/main/src/index.ts): Public exports
+- [src/country-block.ts](https://github.com/paveg/hono-cf-access/blob/main/src/country-block.ts): `countryBlock()` middleware — ISO 3166-1 alpha-2 country code filtering
+- [src/asn-block.ts](https://github.com/paveg/hono-cf-access/blob/main/src/asn-block.ts): `asnBlock()` middleware — ASN-based filtering
+- [src/maintenance.ts](https://github.com/paveg/hono-cf-access/blob/main/src/maintenance.ts): `maintenance()` middleware with `allowedIps` bypass and dynamic toggle
+- [src/ip.ts](https://github.com/paveg/hono-cf-access/blob/main/src/ip.ts): IPv4 / IPv6 address and CIDR matching, including IPv4-mapped IPv6 normalization
+- [src/cf.ts](https://github.com/paveg/hono-cf-access/blob/main/src/cf.ts): `request.cf` extraction and `CfInfo` shape
+- [src/errors.ts](https://github.com/paveg/hono-cf-access/blob/main/src/errors.ts): RFC 9457 `application/problem+json` response builders
+- [src/types.ts](https://github.com/paveg/hono-cf-access/blob/main/src/types.ts): Public TypeScript types (`CfInfo`, options interfaces)
+
+## Package
+
+- [package.json](https://github.com/paveg/hono-cf-access/blob/main/package.json): npm metadata, scripts (`build`, `test`, `lint`, `typecheck`), peer dependency on `hono >= 4.0.0`
+- [npm: hono-cf-access](https://www.npmjs.com/package/hono-cf-access): Published package
+
+## Optional
+
+- [LICENSE](https://github.com/paveg/hono-cf-access/blob/main/LICENSE): MIT
+- [biome.json](https://github.com/paveg/hono-cf-access/blob/main/biome.json): Biome lint / format configuration
+- [tsup.config.ts](https://github.com/paveg/hono-cf-access/blob/main/tsup.config.ts): Build configuration (dual ESM / CJS output)
+- [vitest.config.ts](https://github.com/paveg/hono-cf-access/blob/main/vitest.config.ts): Test runner configuration
+- [tests/](https://github.com/paveg/hono-cf-access/tree/main/tests): Vitest test suite covering middlewares, IP matching, and error responses
