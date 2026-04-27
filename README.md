@@ -167,7 +167,7 @@ This library performs access control based on Cloudflare-supplied geo and networ
 | `fallback` | `'allow' \| 'deny'` | `'allow'` | Behavior when `request.cf` is undefined |
 | `onDenied` | `(c: Context) => Response` | — | Custom response for denied requests |
 
-> `deny` and `allow` are mutually exclusive. Specifying both throws at initialization.
+> Throws [`BlockConfigError`](#blockconfigerror) at initialization if `deny` and `allow` are both specified, neither is specified, or either is an empty array.
 
 ### `asnBlock(options)`
 
@@ -177,6 +177,8 @@ This library performs access control based on Cloudflare-supplied geo and networ
 | `allow` | `number[]` | — | ASN numbers to allow. All others denied |
 | `fallback` | `'allow' \| 'deny'` | `'allow'` | Behavior when `request.cf` is undefined |
 | `onDenied` | `(c: Context) => Response` | — | Custom response for denied requests |
+
+> Throws [`BlockConfigError`](#blockconfigerror) at initialization if `deny` and `allow` are both specified, neither is specified, or either is an empty array.
 
 ### `maintenance(options)`
 
@@ -204,6 +206,45 @@ interface CfInfo {
   postalCode?: string
 }
 ```
+
+### `extractCfInfo(c)`
+
+Returns the normalized `CfInfo` for a request, or `undefined` when `request.cf` is unavailable (e.g. local dev without the Cloudflare runtime). Use this when you need geo data without applying any block — for example, to read the country in a handler while leaving access control to a separate layer.
+
+```ts
+import { extractCfInfo } from 'hono-cf-access'
+
+app.get('/api/region', (c) => {
+  const info = extractCfInfo(c)
+  return c.json({ region: info?.region ?? 'unknown' })
+})
+```
+
+When any block middleware (`countryBlock`, `asnBlock`, `maintenance`) runs, it already populates `c.get('cfInfo')` for downstream handlers; `extractCfInfo` is the manual escape hatch for routes that do not run a middleware.
+
+### `BlockConfigError`
+
+Thrown synchronously by `countryBlock()` and `asnBlock()` when their `deny` / `allow` options are misconfigured. Subclass of `Error` with a `middleware` property identifying the offending caller, so a single `catch` can distinguish multiple call sites.
+
+```ts
+import { BlockConfigError, countryBlock } from 'hono-cf-access'
+
+try {
+  countryBlock({ deny: [], allow: [] })
+} catch (e) {
+  if (e instanceof BlockConfigError) {
+    // e.middleware === 'countryBlock'
+    // e.message === 'countryBlock: cannot specify both "deny" and "allow" — use one or the other'
+  }
+}
+```
+
+Throw conditions:
+- Both `deny` and `allow` are specified
+- Neither `deny` nor `allow` is specified
+- Either `deny` or `allow` is an empty array
+
+The error is thrown at the call to `countryBlock()` / `asnBlock()`, not at request time, so misconfiguration surfaces during Worker startup rather than as a runtime 500.
 
 ## Error Responses
 
