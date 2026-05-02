@@ -14,7 +14,8 @@
 		"sourceMap": true,
 		"outDir": "./dist",
 		"rootDir": "./src",
-		"types": ["@cloudflare/workers-types"]
+		"types": ["@cloudflare/workers-types"],
+		"ignoreDeprecations": "6.0"
 	},
 	"include": ["src"],
 	"exclude": ["node_modules", "dist", "tests"]
