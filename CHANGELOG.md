@@ -1,5 +1,11 @@
 # hono-cf-access
 
+## 0.5.0
+
+### Minor Changes
+
+- [#34](https://github.com/paveg/hono-cf-access/pull/34) [`e3eb594`](https://github.com/paveg/hono-cf-access/commit/e3eb594ec35ed45a0b713fbb0d91a1a394383009) Thanks [@paveg](https://github.com/paveg)! - Drop support for Node.js 20. Node 20 (Iron) reached end-of-life on 2026-04-30, so the CI matrix is reduced to Node 22 and 24, and `engines.node` is bumped from `>=20` to `>=22`.
+
 ## 0.4.2
 
 ### Patch Changes
