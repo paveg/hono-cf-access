@@ -34,49 +34,6 @@ jobs:
           version: pnpm version-packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Ensure GitHub Release for current version
-        # Runs only after changesets/action actually publishes to npm.
-        # Without this guard, the step also fires on Version Packages PR
-        # update runs because changesets/action's `version` mode internally
-        # invokes `pnpm version-packages` — which bumps the working-tree
-        # `package.json` even though the bump is never committed to main.
-        # The dirty working copy then makes `jq -r '.version'` return the
-        # next (unreleased) version, creating a phantom GitHub Release tag
-        # at main HEAD (the v0.5.0/e3eb594 incident on 2026-05-02).
-        #
-        # `outputs.published == 'true'` is set only when `pnpm release`
-        # succeeds, which is exactly the situation where a corresponding
-        # GitHub Release should exist. The step remains idempotent for
-        # cases where changesets/action's own GitHub Release creation
-        # races or is skipped — see the v0.3.0 incident for the original
-        # motivation.
-        #
-        # Security: all shell inputs come from the repository (package.json,
-        # CHANGELOG.md) or trusted env vars (GITHUB_SHA). No untrusted
-        # github.event.* data is interpolated into the run block.
-        if: steps.changesets.outputs.published == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION=$(jq -r '.version' package.json)
-          TAG="v$VERSION"
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            echo "Release $TAG already exists; skipping."
-            exit 0
-          fi
-          # Extract this version's changelog section: lines between "## VERSION"
-          # and the next "## " header.
-          awk -v ver="## $VERSION" '
-            $0 == ver { found=1; next }
-            found && /^## / { exit }
-            found { print }
-          ' CHANGELOG.md > /tmp/release-notes.md
-          if [ -s /tmp/release-notes.md ]; then
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --notes-file /tmp/release-notes.md
-          else
-            echo "No CHANGELOG section found for $VERSION; falling back to auto-generated notes."
-            gh release create "$TAG" --target "$GITHUB_SHA" --title "$TAG" --generate-notes
-          fi
       - name: Set ci-pass status on Version Packages PR
         if: steps.changesets.outputs.pullRequestNumber
         env:
