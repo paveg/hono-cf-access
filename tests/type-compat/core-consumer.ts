@@ -1,17 +1,17 @@
 import { Hono } from "hono";
-import {
-	BlockConfigError,
-	asnBlock,
-	countryBlock,
-	extractCfInfo,
-	maintenance,
-} from "../../dist/index.js";
 import type {
 	AsnBlockOptions,
 	BlockMiddlewareName,
 	CfInfo,
 	CountryBlockOptions,
 	MaintenanceOptions,
+} from "../../dist/index.js";
+import {
+	asnBlock,
+	BlockConfigError,
+	countryBlock,
+	extractCfInfo,
+	maintenance,
 } from "../../dist/index.js";
 
 const _cfInfo: CfInfo = {
