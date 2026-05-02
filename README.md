@@ -27,6 +27,12 @@ Add country blocking, ASN blocking, and maintenance mode to any route with a sin
 npm install hono-cf-access
 ```
 
+### Requirements
+
+- Hono `>= 4.0.0` (peer dependency)
+- TypeScript `>= 5.0` — the published `.d.ts` files are CI-tested against TS 5.0, 5.4, 5.7, and 5.9. Older TypeScript versions may work but are not verified.
+- Node.js `>= 22`
+
 ## Usage
 
 ### Country Blocking
