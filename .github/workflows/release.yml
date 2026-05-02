@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: pnpm/action-setup@v5
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           # Node 24 ships with npm 11.x (required for OIDC Trusted Publishing).
@@ -35,15 +35,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Ensure GitHub Release for current version
-        # Idempotent: creates the tag + Release for the current package.json
-        # version if one does not already exist. Does not rely on
-        # changesets/action outputs, which are empty when the action only
-        # publishes (no pending changesets) rather than versioning + publishing
-        # in the same run — see the v0.3.0 incident for motivation.
+        # Runs only after changesets/action actually publishes to npm.
+        # Without this guard, the step also fires on Version Packages PR
+        # update runs because changesets/action's `version` mode internally
+        # invokes `pnpm version-packages` — which bumps the working-tree
+        # `package.json` even though the bump is never committed to main.
+        # The dirty working copy then makes `jq -r '.version'` return the
+        # next (unreleased) version, creating a phantom GitHub Release tag
+        # at main HEAD (the v0.5.0/e3eb594 incident on 2026-05-02).
+        #
+        # `outputs.published == 'true'` is set only when `pnpm release`
+        # succeeds, which is exactly the situation where a corresponding
+        # GitHub Release should exist. The step remains idempotent for
+        # cases where changesets/action's own GitHub Release creation
+        # races or is skipped — see the v0.3.0 incident for the original
+        # motivation.
         #
         # Security: all shell inputs come from the repository (package.json,
         # CHANGELOG.md) or trusted env vars (GITHUB_SHA). No untrusted
         # github.event.* data is interpolated into the run block.
+        if: steps.changesets.outputs.published == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
