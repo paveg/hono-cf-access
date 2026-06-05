@@ -15,6 +15,10 @@ updates:
     schedule:
       interval: weekly
     groups:
+      vitest:
+        patterns:
+          - vitest
+          - "@vitest/*"
       dev-dependencies:
         dependency-type: development
         update-types:
