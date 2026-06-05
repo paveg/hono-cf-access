@@ -87,6 +87,6 @@
 		"lefthook": "2.1.6",
 		"tsup": "^8.0.0",
 		"typescript": "^6.0.3",
-		"vitest": "^3.0.0"
+		"vitest": "^4.1.0"
 	}
 }
