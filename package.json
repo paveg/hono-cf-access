@@ -84,7 +84,7 @@
 		"@cloudflare/workers-types": "^4.0.0",
 		"@vitest/coverage-v8": "^4.1.0",
 		"hono": "^4.12.14",
-		"lefthook": "2.1.6",
+		"lefthook": "2.1.9",
 		"tsup": "^8.0.0",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.8"
