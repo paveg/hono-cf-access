@@ -60,7 +60,7 @@
 		"node": ">=22"
 	},
 	"peerDependencies": {
-		"hono": ">=4.12.25"
+		"hono": ">=4.12.27"
 	},
 	"packageManager": "pnpm@10.14.0",
 	"pnpm": {
