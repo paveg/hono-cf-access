@@ -24,3 +24,9 @@ updates:
         update-types:
           - minor
           - patch
+    ignore:
+      # hono is a peerDependency — a semver-major bump needs a coordinated
+      # peer-range change and cannot be merged from an automated PR.
+      - dependency-name: hono
+        update-types:
+          - version-update:semver-major
