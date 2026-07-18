@@ -60,7 +60,7 @@
 		"node": ">=22"
 	},
 	"peerDependencies": {
-		"hono": ">=4.0.0"
+		"hono": ">=4.12.27"
 	},
 	"packageManager": "pnpm@10.14.0",
 	"pnpm": {
@@ -70,8 +70,10 @@
 			"lefthook"
 		],
 		"overrides": {
-			"vite@<6.4.2": "^6.4.2",
-			"esbuild@<0.25.0": "^0.25.0",
+			"vite@<7.3.5": "^7.3.5",
+			"esbuild@<0.28.1": "^0.28.1",
+			"js-yaml@<4.2.0": "^4.2.0",
+			"yaml@<2.8.3": "^2.8.3",
 			"picomatch@<2.3.2": "^2.3.2",
 			"picomatch@>=4.0.0 <4.0.4": "^4.0.4",
 			"postcss@<8.5.10": "^8.5.10"
@@ -82,8 +84,8 @@
 		"@changesets/changelog-github": "0.7.0",
 		"@changesets/cli": "2.31.0",
 		"@cloudflare/workers-types": "^4.0.0",
-		"@vitest/coverage-v8": "^4.1.0",
-		"hono": "^4.12.14",
+		"@vitest/coverage-v8": "^4.1.8",
+		"hono": "^4.12.27",
 		"lefthook": "2.1.6",
 		"tsup": "^8.0.0",
 		"typescript": "^6.0.3",
