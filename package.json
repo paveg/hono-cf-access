@@ -82,11 +82,11 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.14",
 		"@changesets/changelog-github": "0.7.0",
-		"@changesets/cli": "2.31.0",
+		"@changesets/cli": "2.31.1",
 		"@cloudflare/workers-types": "^4.0.0",
 		"@vitest/coverage-v8": "^4.1.8",
 		"hono": "^4.12.27",
-		"lefthook": "2.1.6",
+		"lefthook": "2.1.10",
 		"tsup": "^8.0.0",
 		"typescript": "^6.0.3",
 		"vitest": "^4.1.8"
