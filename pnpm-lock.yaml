@@ -34,8 +34,8 @@ importers:
         specifier: ^4.1.8
         version: 4.1.10(vitest@4.1.11)
       hono:
-        specifier: ^4.12.34
-        version: 4.13.2
+        specifier: ^4.13.7
+        version: 4.13.7
       lefthook:
         specifier: 2.1.10
         version: 2.1.10
@@ -1043,8 +1043,8 @@ packages:
     resolution: {integrity: sha512-EykJT/Q1KjTWctppgIAgfSO0tKVuZUjhgMr17kqTumMl6Afv3EISleU7qZUzoXDFTAHTDC4NOoG/ZxU3EvlMPQ==}
     engines: {node: '>=8'}
 
-  hono@4.13.2:
-    resolution: {integrity: sha512-JydRilDRkYBQMt9qR9U92mXxmbGqsqSn/IKOrh4e7/gEbn+0zSr8igTu0obwJoNGN4sez28DIql7FBHWydoJpA==}
+  hono@4.13.7:
+    resolution: {integrity: sha512-c8/gF9ac8Y78/agExVocyLevgR+JlpNB444Py0FSX8pJoPdYUfUzRcXtYEYGwt6l19qIlVZPN5Mfsw9jFShmQQ==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -2452,7 +2452,7 @@ snapshots:
 
   has-flag@4.0.0: {}
 
-  hono@4.13.2: {}
+  hono@4.13.7: {}
 
   html-escaper@2.0.2: {}
 
