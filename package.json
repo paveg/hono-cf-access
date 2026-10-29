@@ -86,7 +86,7 @@
 		"@biomejs/biome": "^2.4.14",
 		"@changesets/changelog-github": "0.7.0",
 		"@changesets/cli": "^3.0.3",
-		"@cloudflare/workers-types": "^4.0.0",
+		"@cloudflare/workers-types": "^5.20261026.1",
 		"@vitest/coverage-v8": "^4.1.12",
 		"hono": "^4.13.7",
 		"lefthook": "2.2.1",
